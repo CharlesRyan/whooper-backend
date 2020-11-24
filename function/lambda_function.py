@@ -1,3 +1,9 @@
+# ensures zipped dependencies landed safely in AWS
+try:
+  import unzip_requirements
+except ImportError:
+  pass
+
 import json
 import pandas as pd
 

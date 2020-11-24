@@ -12,7 +12,8 @@
     "zip": "cd backend && zip -r lambda_function.zip ./function",
     "deploy:lambda": "npm run zip && npm run lambda",
     "s3": "cd backend && ./2-build-layer.sh && ./3-deploy.sh",
-    "py": "python3 backend/lambda_function.py"
+    "py": "python3 backend/lambda_function.py",
+    "deploy": "serverless deploy --verbose "
   },
   "author": "",
   "license": "ISC",

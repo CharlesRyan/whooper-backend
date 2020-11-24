@@ -1,8 +1,9 @@
-service: numpy-test
+service: whooper-test
 
 provider:
   name: aws
   runtime: python3.6
+  region: us-west-1
 
 functions:
   numpy:
@@ -13,5 +14,6 @@ plugins:
 
 custom:
   pythonRequirements:
+    zip: true
     layer: true
     dockerizePip: non-linux
