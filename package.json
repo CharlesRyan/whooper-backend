@@ -1,0 +1,19 @@
+{
+  "name": "whooper-backend",
+  "version": "1.0.0",
+  "description": "whooper backend",
+  "main": "function/lambda_function.py",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "test",
+    "lambda": "cd backend && aws lambda update-function-code --function-name Whooper --zip-file fileb://lambda_function.zip",
+    "zip": "cd backend && zip -r lambda_function.zip ./function",
+    "deploy:lambda": "npm run zip && npm run lambda",
+    "s3": "cd backend && ./2-build-layer.sh && ./3-deploy.sh",
+    "py": "python3 backend/lambda_function.py"
+  },
+  "author": "",
+  "license": "ISC"
+}
