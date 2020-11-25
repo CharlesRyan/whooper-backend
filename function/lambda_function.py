@@ -7,8 +7,8 @@ except ImportError:
 import json
 import pandas as pd
 
-from modules.whoop_module import whoop_module
-from modules.sheet_module import sheet_module
+from function.modules.whoop_module import whoop_module
+from function.modules.sheet_module import sheet_module
 
 class Main:
 

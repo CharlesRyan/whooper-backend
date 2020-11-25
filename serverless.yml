@@ -5,9 +5,13 @@ provider:
   runtime: python3.6
   region: us-west-1
 
+package:
+  include:
+    - function/**
+
 functions:
-  numpy:
-    handler: handler.main
+  whooper:
+    handler: function/lambda_function.lambda_handler
 
 plugins:
   - serverless-python-requirements
