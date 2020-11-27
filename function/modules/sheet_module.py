@@ -9,9 +9,12 @@ class sheet_module:
     self.raw_data = None
 
   def parse_data(self, raw_data):
-    self.raw_data = raw_data
+    parsed_data = [json.loads(x) for x in raw_data]
+    print('parsed_data', parsed_data)
 
-    for idx, entry in enumerate(raw_data['values']):
+    '''
+    # date parsing, only needed for whoop integration
+    for idx, entry in enumerate(parsed_data):
       # first item in values is list of column headers
       if idx > 0:
         # transform gsheet date to whoop format (2020-06-04) so the datasets can be joined based on date
@@ -23,14 +26,15 @@ class sheet_module:
 
         year = '2020' if '2021' not in entry else '2021'
         entry[0] = f'{year}-{month}-{day}'
+    '''
 
     # create gsheet DF
-    gsheet_data_headers = raw_data['values'][0:1][0]
-    gsheet_data_rows = raw_data['values'][1:]
+    gsheet_data_headers = parsed_data[0:1][0]
+    gsheet_data_rows = parsed_data[1:]
 
     gsheet_df = pd.DataFrame(gsheet_data_rows, columns=gsheet_data_headers)
 
-    print(gsheet_df)
+    # print(gsheet_df)
     # print(gsheet_df.dtypes)
 
     for col in list(gsheet_df):

@@ -24,13 +24,22 @@ class Main:
     # self.sheet_data = event
     # self.__parse_sheet_data()
     #######
-
+    
     ## api use
-    parsedEvent = json.loads(event)
-    if parsedEvent['requestContext']['http']['method'] != 'POST' or parsedEvent['body'] is None or len(parsedEvent['body']) == 0:
+    self.sheet_data = None
+
+    if 'body' in event and event['body'] is not None and len(event['body']) != 0:
+      self.sheet_data = event['body']
+    elif 'multiValueQueryStringParameters' in event and 'data[]' in event['multiValueQueryStringParameters'] is not None and len(event['multiValueQueryStringParameters']['data[]']) != 0:
+      print('has params')
+      self.sheet_data = event['multiValueQueryStringParameters']['data[]']
+
+
+    print('sheet data:', self.sheet_data)
+
+    if self.sheet_data is None:
       raise ValueError
     else:
-      self.sheet_data = json.loads(parsedEvent['body'])
       self.__parse_sheet_data()
 
 
@@ -38,13 +47,14 @@ class Main:
     whoop = whoop_module()
     refetch = False
     # refetch = True
-    if refetch: whoop.authorize(self.CRED_PATH)
+    # if refetch: whoop.authorize(self.CRED_PATH)
 
-    return whoop.get_summary_data(refetch)
+    # return whoop.get_summary_data(refetch)
     # return whoop.get_all_data(refetch)
 
 
   def __parse_sheet_data(self):
+    print('parsing')
 
     ############# dev
     # with open('backend/sample_data/gsheet.json') as f:
@@ -53,14 +63,17 @@ class Main:
 
     sheet = sheet_module()
     self.sheet_df = sheet.parse_data(self.sheet_data)
+    print('sheet df created')
 
 
   def analyze(self):
+    print('analyzing')
     # 
-    pd.set_option("display.max_rows", None, "display.max_columns", None)
+    # pd.set_option("display.max_rows", None, "display.max_columns", None)
     # pd.set_option("display.max_rows", None)
     # 
 
+    # may need to change hasattr to 'x in y'
     if hasattr(self, 'whoop_df') and self.whoop_df is not None:
       # mish sheet data and whoop_data together based on matching the day column
       all_data = pd.merge(self.whoop_df, self.sheet_df, on='day')
@@ -113,13 +126,28 @@ sheet = True
 ############# dev
 
 def lambda_handler(event, context):
-  try:
-    main = Main(event)
-  except:
-    return {
-          'statusCode': 422,
-          'body': json.dumps('Invalid request')
-      }
+  print('raw event: ', event)
+
+  # if 'httpMethod' in event and event['httpMethod'] == 'OPTIONS':
+  #   print('handling options request')
+  #   return {
+  #         'statusCode': 200,
+  #         'headers': {
+  #             'Access-Control-Allow-Headers': 'Content-Type',
+  #             'Access-Control-Allow-Origin': '*',
+  #             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+  #         },
+  #         'body': json.dumps('Hello from Lambda!')
+  #     }
+
+  # try:
+  main = Main(event)
+  # except:
+  #   print('main failed, sending 422')
+  #   return {
+  #         'statusCode': 422,
+  #         'body': json.dumps('Invalid request')
+  #     }
 
   analysis = main.analyze()
 

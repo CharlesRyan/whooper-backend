@@ -7,13 +7,9 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "test",
-    "lambda": "cd backend && aws lambda update-function-code --function-name Whooper --zip-file fileb://lambda_function.zip",
-    "zip": "cd backend && zip -r lambda_function.zip ./function",
-    "deploy:lambda": "npm run zip && npm run lambda",
-    "s3": "cd backend && ./2-build-layer.sh && ./3-deploy.sh",
     "py": "python3 backend/lambda_function.py",
-    "deploy": "serverless deploy --verbose "
+    "deploy": "serverless deploy --verbose ",
+    "deploy:lambda": "serverless deploy function --function whooper"
   },
   "author": "",
   "license": "ISC",
