@@ -50,7 +50,7 @@ class Main:
   def __get_whoop_data(self):
     whoop = whoop_module(self.whoop_login['token'], self.whoop_login['id'], self.whoop_login['createdAt'])
     self.whoop_df = whoop.get_summary_data()
-    # self.whoop_df whoop.get_all_data(refetch)
+    # self.whoop_df whoop.get_all_data()
 
 
   def __parse_sheet_data(self):
@@ -68,9 +68,8 @@ class Main:
     # pd.set_option("display.max_rows", None)
     # 
 
-    # may need to change hasattr to 'x in y'
     if hasattr(self, 'whoop_df') and self.whoop_df is not None:
-      # mish sheet data and whoop_data together based on matching the day column
+      # mish sheet data and whoop data together based on matching the day column
       all_data = pd.merge(self.whoop_df, self.sheet_df, on='day')
     else:
       all_data = self.sheet_df

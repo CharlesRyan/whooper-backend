@@ -18,22 +18,16 @@ class sheet_module:
     sheet_data_rows = parsed_data[1:]
 
     sheet_df = pd.DataFrame(sheet_data_rows, columns=sheet_data_headers)
-    
-    # standardize date formatting
-    # for whatever label the user gave their date column
-    date_label = None
 
-    if 'Day' in sheet_df.columns:
-      date_label = 'Day'
-    elif 'day' in sheet_df.columns:
-      date_label = 'day'
-    elif 'date' in sheet_df.columns:
-      date_label = 'date'
-    elif 'Date' in sheet_df.columns:
-      date_label = 'Date'
+    # change label to 'day' from whatever label the user gave their date column
+    # in order to merge nicely with whoop DF
+    potential_labels = ['Day', 'date', 'Date']
 
-    if date_label is not None:
-      sheet_df[date_label] = sheet_df[date_label].apply(lambda r: parser.parse(r).strftime("%Y-%m-%d"))
+    sheet_df.columns = ['day' if col in potential_labels else col for col in sheet_df.columns]
+
+    if 'day' in sheet_df.columns:
+      # standardize date formatting
+      sheet_df['day'] = sheet_df['day'].apply(lambda r: parser.parse(r).strftime("%Y-%m-%d"))
 
     # print(sheet_df)
     # print(sheet_df.dtypes)
