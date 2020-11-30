@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "py": "python3 backend/lambda_function.py",
+    "py": "python3 function/lambda_function.py",
     "deploy": "serverless deploy --verbose ",
     "deploy:lambda": "serverless deploy function --function whooper"
   },

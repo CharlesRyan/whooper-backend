@@ -8,9 +8,10 @@ from dateutil.rrule import WEEKLY
 
 class whoop_module:
 
-    def __init__(self, auth_code = None, whoop_id = None, current_datetime = datetime.utcnow()):
-        self.auth_code = auth_code
+    def __init__(self, auth_code = None, whoop_id = None, start_datetime = None, current_datetime = datetime.utcnow()):
+        self.auth_code = 'bearer ' + auth_code
         self.whoop_id = whoop_id
+        self.start_datetime = start_datetime
         self.all_data = None
         self.current_datetime=current_datetime
 
@@ -26,6 +27,7 @@ class whoop_module:
             else:
                 return response.json()
         else:
+            print(response)
             return f"error requesting {url}"
 
     def authorize(self, user_ini):
@@ -105,8 +107,8 @@ class whoop_module:
                 self.all_data = all_data
 
                 ###################### dev only
-                all_data.to_csv('backend/output/whoop_all_data.csv', index=False)
-                print('Whoop all_data sent to csv')
+                # all_data.to_csv('backend/output/whoop_all_data.csv', index=False)
+                # print('Whoop all_data sent to csv')
                 ###################### dev only
 
                 return all_data
@@ -114,7 +116,7 @@ class whoop_module:
             print("Authorization data not found")
 
 
-    def get_summary_data(self, refetch):
+    def get_summary_data(self, refetch=True):
         '''
             returns only the data points that are useful for calculating activity impact
         '''

@@ -26,3 +26,4 @@ creds.ini
 .requirements.zip
 bin/**
 pyenv.cfg
+test_event.py
