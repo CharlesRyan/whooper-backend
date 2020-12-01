@@ -1,8 +1,8 @@
-# prod = True
-prod = False
+prod = True
+# prod = False
 
-# ensures zipped dependencies landed safely in AWS
 if prod: 
+  # ensures zipped dependencies landed safely in AWS
   try:
     import unzip_requirements
   except ImportError:
@@ -27,29 +27,36 @@ class Main:
     self.whoop_login = None
     self.whoop_df = None
 
-    if 'body' in event and event['body'] is not None and len(event['body']) != 0:
-      self.sheet_data = event['body']
-    elif 'multiValueQueryStringParameters' in event and 'data[]' in event['multiValueQueryStringParameters'] is not None and len(event['multiValueQueryStringParameters']['data[]']) != 0:
-      print('has params')
-      event_params = event['multiValueQueryStringParameters']
-      self.sheet_data = event_params['data[]']
-
-      if 'whoop' in event_params:
-        self.whoop_login = json.loads(event_params['whoop'][0])
-        self.__get_whoop_data()
+    if 'sheet' in event and event['sheet'] is not None:
+      self.sheet_data = event['sheet']
+    elif 'body' in event:
+      event_body = json.loads(event['body'])
+      if 'sheet' in event_body:
+        self.sheet_data = event_body['sheet']
 
 
-    print('sheet data:', self.sheet_data)
+    if 'whoop' in event and event['whoop'] is not None:
+      self.whoop_login = event['whoop']
+    elif 'body' in event:
+      event_body = json.loads(event['body'])
+      if 'whoop' in event_body:
+        self.whoop_login = event_body['whoop']
 
-    if self.sheet_data is None:
-      raise ValueError
-    else:
+
+    if self.sheet_data is not None:
+      print('sheet data:', self.sheet_data)
       self.__parse_sheet_data()
+
+    if self.whoop_login is not None:
+      print('event has whoop data')
+      self.__get_whoop_data()
 
 
   def __get_whoop_data(self):
+    print('getting whoop data')
     whoop = whoop_module(self.whoop_login['token'], self.whoop_login['id'], self.whoop_login['createdAt'])
     self.whoop_df = whoop.get_summary_data()
+    print('got whoop data')
     # self.whoop_df whoop.get_all_data()
 
 
@@ -69,26 +76,17 @@ class Main:
     # 
 
     if hasattr(self, 'whoop_df') and self.whoop_df is not None:
+      print('merging whoop and sheet DFs')
       # mish sheet data and whoop data together based on matching the day column
       all_data = pd.merge(self.whoop_df, self.sheet_df, on='day')
     else:
+      print('just using sheet DF')
       all_data = self.sheet_df
 
     # alphabetically sort columns
     all_data.sort_index(axis=1, inplace=True)
 
     correlations = all_data.corr()
-
-    # correlations.to_json('backend/output/correlations.json')
-    # print('Corr output sent to json')
-    # correlations.to_csv('backend/output/correlations.csv')
-    # print('Corr output sent to csv')
-
-    # print(self.whoop_df)
-    # print(all_data.head())
-    # print(all_data)
-    # print(all_data.corr())
-    # print(all_data.dtypes)
 
     return correlations.to_json()
 
@@ -117,6 +115,12 @@ def lambda_handler(event, context):
 
   return {
         'statusCode': 200,
+        'headers': {
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+            "Access-Control-Allow-Credentials" : json.dumps(True)
+        },
         'body': json.dumps(analysis)
     }
 

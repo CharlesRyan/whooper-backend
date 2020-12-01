@@ -57,6 +57,7 @@ class whoop_module:
             print("Authentication failed")
 
     def get_all_data(self, refetch=True):
+        print('getting all whoop data')
         '''
         returns a dataframe of WHOOP metrics for each day 
         In each dataframe, each day is a row and contains strain, recovery, and sleep information

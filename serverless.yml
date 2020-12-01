@@ -13,6 +13,11 @@ functions:
   whooper:
     package: {}
     handler: function/lambda_function.lambda_handler
+    events:
+      - http:
+          path: whooper-sls
+          method: post
+          cors: true 
 
 plugins:
   - serverless-python-requirements

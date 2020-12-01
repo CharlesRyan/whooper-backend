@@ -9,13 +9,12 @@ class sheet_module:
   def __init__(self):
     self.raw_data = None
 
-  def parse_data(self, raw_data):
-    parsed_data = [json.loads(x) for x in raw_data]
-    print('parsed_data', parsed_data)
+  def parse_data(self, data):
+    print('parse_data', data)
 
     # create sheet DF
-    sheet_data_headers = parsed_data[0:1][0]
-    sheet_data_rows = parsed_data[1:]
+    sheet_data_headers = data[0:1][0]
+    sheet_data_rows = data[1:]
 
     sheet_df = pd.DataFrame(sheet_data_rows, columns=sheet_data_headers)
 
