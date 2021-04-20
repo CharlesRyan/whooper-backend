@@ -94,12 +94,12 @@ class whoop_module:
                 sleep_cols = ['sleep.qualityDuration', 'sleep.sleeps.qualityDuration', 'sleep.needBreakdown.baseline', 'sleep.needBreakdown.debt', 'sleep.needBreakdown.naps', 'sleep.needBreakdown.strain', 'sleep.needBreakdown.total', 'sleep.sleeps.inBedDuration', 'sleep.sleeps.latencyDuration', 'sleep.sleeps.lightSleepDuration', 'sleep.sleeps.remSleepDuration', 'sleep.sleeps.wakeDuration', 'sleep.sleeps.slowWaveSleepDuration']
                 for sleep_col in sleep_cols:
                     try:
-                        all_data[sleep_col] = all_data[sleep_col].astype(float).apply(lambda x: np.nan if np.isnan(x) else x/60000)
+                        all_data[sleep_col] = all_data[sleep_col].astype(float).apply(lambda x: np.nan if np.isnan(x) or x is None else x/60000)
                     except:
                         print('issue with', sleep_col)
 
                 ## Making nap variable
-                all_data['nap_duration'] = all_data['sleep.naps'].apply(lambda x: x[0]['qualityDuration']/60000 if len(x) == 1 else(
+                all_data['nap_duration'] = all_data['sleep.naps'].apply(lambda x: x[0]['qualityDuration']/60000 if len(x) == 1 and x[0]['qualityDuration'] is not None else(
                                                     sum([y['qualityDuration'] for y in x if y['qualityDuration'] is not None])/60000 if len(x)>1 else 0))
                 all_data.drop(['sleep.naps'],axis = 1,inplace = True)
                 ## dropping duplicates subsetting because of list columns

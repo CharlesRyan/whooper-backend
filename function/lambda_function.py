@@ -111,7 +111,14 @@ def lambda_handler(event, context):
   #         'body': json.dumps('Invalid request')
   #     }
 
-  analysis = main.analyze()
+  correlations = main.analyze()
+
+  return_data = {
+    'correlations': correlations
+  }
+
+  if main.whoop_df is not None:
+    return_data['whoop_raw_data'] = main.whoop_df.to_json()
 
   return {
         'statusCode': 200,
@@ -121,7 +128,7 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
             "Access-Control-Allow-Credentials" : json.dumps(True)
         },
-        'body': json.dumps(analysis)
+        'body': json.dumps(return_data)
     }
 
 # local api mimicing
