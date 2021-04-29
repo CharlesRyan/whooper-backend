@@ -26,8 +26,10 @@ class sheet_module:
 
     if 'day' in sheet_df.columns:
       # standardize date formatting
-      sheet_df['day'] = sheet_df['day'].apply(lambda r: parser.parse(r).strftime("%Y-%m-%d"))
-
+      try:
+        sheet_df['day'] = sheet_df['day'].apply(lambda r: parser.parse(r).strftime("%Y-%m-%d") if r is not None and len(r) else r)
+      except:
+        print('error parsing dates')
     # print(sheet_df)
     # print(sheet_df.dtypes)
 
